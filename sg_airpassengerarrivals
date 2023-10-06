@@ -1,0 +1,38 @@
+-- Data source: data.gov.sg
+                Air Passenger Arrivals - Total by Region and Selected Country of Embarkation
+                
+-- Background: Air Passenger Arrivals by Region and Selected Country of Embarkation.
+
+-- Note: Refers to Changi Airport only.
+         Data exclude transit passengers who continued their journey on the same flight.
+         Figures from January 1989 refer to Changi Airport only.
+         Data for GERMANY prior to January 1991 refers to Federal Republic of Germany only.
+         Please note that the information has been obtained from third party sources.
+
+
+-- Setting up tables to include a  new 'year' column, then populating it with the corresponding data in an existing column.
+
+SELECT * FROM sg_airpassengerarrivals.arrivalsbycountry;
+
+ALTER TABLE arrivalsbycountry
+ADD year text;
+
+UPDATE arrivalsbycountry
+SET year = LEFT (month, 4);
+
+SELECT * FROM sg_airpassengerarrivals.arrivalsbyregion;
+ALTER TABLE arrivalsbyregion
+ADD year text;
+
+UPDATE arrivalsbyregion
+SET year = LEFT (month, 4);
+
+
+--Finding the number of yearly arrivals from Japan between 2000 and 2018.
+
+SELECT year,
+	   SUM(arrivals) AS 'Yearly Arrivals'
+FROM sg_airpassengerarrivals.arrivalsbycountry
+WHERE country = 'Japan' AND
+	    year BETWEEN 2000 AND 2018
+GROUP BY year
